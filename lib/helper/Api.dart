@@ -16,6 +16,7 @@ class Api {
         headers: {'token': token, 'Content-Type': 'application/json'});
     if (response.statusCode == 200) {
       Login dadosJson = new Login.fromMap(json.decode(response.body));
+      print(dadosJson);
       return dadosJson;
     } else {
       return null;
@@ -45,6 +46,7 @@ class Api {
         headers: {'token': token, 'Content-Type': 'application/json'});
     if (response.statusCode == 200) {
       Person dadosJson = new Person.fromJson(json.decode(response.body));
+      print(dadosJson);
       return dadosJson;
     } else {
       return null;
@@ -58,6 +60,7 @@ class Api {
       List<Person> pessoas = json.decode(response.body).map<Person>((map) {
         return Person.fromJson(map);
       }).toList();
+      print(response.body);
       return pessoas;
     } else {
       return null;
