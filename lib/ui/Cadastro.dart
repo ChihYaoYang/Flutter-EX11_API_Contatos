@@ -20,8 +20,20 @@ class _CadastroState extends State<Cadastro> {
   final _nomeFocus = FocusNode();
   final _formCadastro = GlobalKey<FormState>();
 
+  bool isLoading = false;
+
   @override
   Widget build(BuildContext context) {
+    Widget loadingIndicator = isLoading
+        ? new Container(
+            color: Colors.grey[300],
+            width: 70.0,
+            height: 70.0,
+            child: new Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: new Center(child: new CircularProgressIndicator())),
+          )
+        : new Container();
     return Scaffold(
       appBar: AppBar(
         title: Text('Cadastro de usuário'),
@@ -69,37 +81,49 @@ class _CadastroState extends State<Cadastro> {
                   padding: EdgeInsets.only(top: 20.0),
                   child: ButtonTheme(
                     minWidth: double.infinity,
-                    child: RaisedButton(
-                        padding: EdgeInsets.symmetric(vertical: 15.0),
-                        child: Text("Cadastrar"),
-                        elevation: 3,
-                        color: Colors.white,
-                        textColor: Colors.blueAccent,
-                        onPressed: () async {
-                          if (_formCadastro.currentState.validate()) {
-                            if (await api.cadastro(
-                                    _nomeController.text,
-                                    _emailController.text,
-                                    _senhaController.text) !=
-                                null) {
-                              Login user = await api.login(
-                                  _emailController.text, _senhaController.text);
-                              Navigator.pop(context);
-                              if (user != null) {
-                                helper.saveLogado(user.id, user.token);
-                                Navigator.pop(context);
-                                await Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            HomePage(user.token, user.id)));
+                    child: (isLoading)
+                        ? new Align(
+                            child: loadingIndicator,
+                            alignment: FractionalOffset.center,
+                          )
+                        : RaisedButton(
+                            padding: EdgeInsets.symmetric(vertical: 15.0),
+                            child: Text("Cadastrar"),
+                            elevation: 3,
+                            color: Colors.white,
+                            textColor: Colors.blueAccent,
+                            onPressed: () async {
+                              if (_formCadastro.currentState.validate()) {
+                                setState(() {
+                                  isLoading = true;
+                                });
+                                if (await api.cadastro(
+                                        _nomeController.text,
+                                        _emailController.text,
+                                        _senhaController.text) !=
+                                    null) {
+                                  Login user = await api.login(
+                                      _emailController.text,
+                                      _senhaController.text);
+                                  Navigator.pop(context);
+                                  if (user != null) {
+                                    helper.saveLogado(user.id, user.token);
+                                    Navigator.pop(context);
+                                    await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                HomePage(user.token, user.id)));
+                                  }
+                                } else {
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  dialog.showAlertDialog(context, 'Aviso',
+                                      'Usuário não cadastrado');
+                                }
                               }
-                            } else {
-                              dialog.showAlertDialog(
-                                  context, 'Aviso', 'Usuário não cadastrado');
-                            }
-                          }
-                        }),
+                            }),
                   ),
                 ),
               ],

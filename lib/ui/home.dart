@@ -26,7 +26,7 @@ class _HomePageState extends State<HomePage> {
   List<Person> person = List();
   Api api = new Api();
 
-  var isLoading = false;
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -37,6 +37,15 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    Widget loadingIndicator = isLoading
+        ? new Container(
+            width: 70.0,
+            height: 70.0,
+            child: new Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: new Center(child: new CircularProgressIndicator())),
+          )
+        : new Container();
     return Scaffold(
         appBar: AppBar(
           title: Text('Contatos'),
@@ -72,8 +81,9 @@ class _HomePageState extends State<HomePage> {
         ),
         body: WillPopScope(
             child: (isLoading)
-                ? Center(
-                    child: CircularProgressIndicator(),
+                ? new Align(
+                    child: loadingIndicator,
+                    alignment: FractionalOffset.center,
                   )
                 : ListView.builder(
                     padding: EdgeInsets.all(10.0),
@@ -94,6 +104,9 @@ class _HomePageState extends State<HomePage> {
                   contact: person,
                 )));
     if (recContact != null) {
+      setState(() {
+        isLoading = true;
+      });
       if (person != null) {
         await api.atualizarContato(recContact, widget.login_id, widget.token);
       } else {
@@ -203,8 +216,12 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       onPressed: () {
+        setState(() {
+          isLoading = true;
+        });
         api.deletarContato(person[index].id, widget.token);
         setState(() {
+          isLoading = false;
           person.removeAt(index);
           Navigator.pop(context);
         });

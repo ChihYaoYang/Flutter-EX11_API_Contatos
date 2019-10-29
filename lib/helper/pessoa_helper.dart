@@ -11,58 +11,6 @@ class PersonHelper {
 
   Databases databases = new Databases();
 
-//  Future<Person> savePerson(Person person, int login_id) async {
-//    Person person2 = person;
-//    Person novaPerson = Person();
-//    novaPerson.usuario_id = login_id;
-//    novaPerson.nome = person2.nome;
-//    novaPerson.telefone = person2.telefone;
-//    Database dbPerson = await databases.db;
-//    person.id = await dbPerson.insert(personTable, novaPerson.toMap());
-//    return person;
-//  }
-//
-//  Future<Person> getPerson(int id) async {
-//    Database dbPerson = await databases.db;
-//    List<Map> maps = await dbPerson.query(personTable,
-//        columns: [idPersonColumn, nomePersonColumn, telefonePersonColumn],
-//        where: "$idPersonColumn = ?",
-//        whereArgs: [id]);
-//    if (maps.length > 0) {
-//      return Person.fromMap(maps.first);
-//    } else {
-//      return null;
-//    }
-//  }
-//
-//  Future<int> deletePerson(int id) async {
-//    Database dbPerson = await databases.db;
-//    return await dbPerson
-//        .delete(personTable, where: "$idPersonColumn = ?", whereArgs: [id]);
-//  }
-//
-//  Future<int> updatePerson(Person person, int login_id) async {
-//    Person person2 = person;
-//    Person novaPerson = Person();
-//    novaPerson.usuario_id = login_id;
-//    novaPerson.nome = person2.nome;
-//    novaPerson.telefone = person2.telefone;
-//    Database dbPerson = await databases.db;
-//    return await dbPerson.update(personTable, novaPerson.toMap(),
-//        where: "$idPersonColumn = ?", whereArgs: [person2.id]);
-//  }
-//
-//  Future<List> getAllPersons(int login_id) async {
-//    Database dbPerson = await databases.db;
-//    List listMap = await dbPerson
-//        .rawQuery("SELECT * FROM $personTable WHERE login_id=$login_id");
-//    List<Person> listPerson = List();
-//    for (Map m in listMap) {
-//      listPerson.add(Person.fromMap(m));
-//    }
-//    return listPerson;
-//  }
-
   Future close() async {
     Database dbPerson = await databases.db;
     dbPerson.close();
@@ -74,8 +22,6 @@ class Person {
   String nome;
   String telefone;
   dynamic usuario_id;
-
-//  Person();
 
   Person({this.id, this.nome, this.telefone, this.usuario_id});
 
@@ -95,24 +41,6 @@ class Person {
     data['telefone'] = this.telefone;
     return data;
   }
-
-//  Person.fromMap(Map map) {
-//    id = map[id];
-//    nome = map[nome];
-//    telefone = map[telefone];
-//    usuario_id = map[usuario_id];
-//  }
-//
-//  Map toMap() {
-//    Map<String, dynamic> map = {
-//      nome: nome,
-//      telefone: telefone,
-//    };
-//    if (id != null) {
-//      map[id] = id;
-//    }
-//    return map;
-//  }
 
   @override
   String toString() {

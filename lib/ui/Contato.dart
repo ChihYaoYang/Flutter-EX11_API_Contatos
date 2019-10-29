@@ -28,7 +28,6 @@ class _ContatoState extends State<Contato> {
     if (widget.contact == null) {
       _editedContact = Person();
     } else {
-//      _editedContact = Person.fromMap(widget.contact.toMap());
       _editedContact = Person.fromJson(widget.contact.toJson());
       _nameController.text = _editedContact.nome;
       _telefoneController.text = _editedContact.telefone;
@@ -104,14 +103,14 @@ class _ContatoState extends State<Contato> {
               content: Text('Se sair as alterações serão perdidas.'),
               actions: <Widget>[
                 FlatButton(
-                  child: Text('Cancelar'),
+                  child: Text('Sim'),
                   onPressed: () {
                     Navigator.pop(context);
                     Navigator.pop(context);
                   },
                 ),
                 FlatButton(
-                  child: Text('Sim'),
+                  child: Text('Cancelar'),
                   onPressed: () {
                     Navigator.pop(context);
                   },

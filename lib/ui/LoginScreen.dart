@@ -26,8 +26,22 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emaiLFocus = FocusNode();
   final _formLogin = GlobalKey<FormState>();
 
+  bool isLoading = false;
+
   @override
   Widget build(BuildContext context) {
+    Widget loadingIndicator = isLoading
+        ?
+    new Container(
+      color: Colors.grey[300],
+      width: 70.0,
+      height: 70.0,
+      child: new Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: new Center(child: new CircularProgressIndicator())),
+
+          )
+        : new Container();
     return Scaffold(
       backgroundColor: Colors.blueAccent[50],
       body: WillPopScope(
@@ -62,35 +76,47 @@ class _LoginScreenState extends State<LoginScreen> {
                       },
                     ),
                     SizedBox(height: 30),
-                    RaisedButton(
-                      child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Icon(Icons.https),
-                            Text("Entrar"),
-                          ]),
-                      color: Colors.blueAccent,
-                      textColor: Colors.white,
-                      onPressed: () async {
-                        if (_formLogin.currentState.validate()) {
-                          Login user = await api.login(
-                              _emailController.text, _senhaController.text);
-                          if (user != null) {
-                            helper.saveLogado(user.id, user.token);
-                            Navigator.pop(context);
-                            await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        HomePage(user.token, user.id)));
-                          } else {
-                            dialog.showAlertDialog(
-                                context, 'Aviso', 'Login inválido');
-                          }
-                        }
-                      },
-                    ),
+                    (isLoading)
+                        ? new Align(
+                            child: loadingIndicator,
+                            alignment: FractionalOffset.center,
+                          )
+                        : RaisedButton(
+                            child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Icon(Icons.https),
+                                  Text("Entrar"),
+                                ]),
+                            color: Colors.blueAccent,
+                            textColor: Colors.white,
+                            onPressed: () async {
+                              if (_formLogin.currentState.validate()) {
+                                setState(() {
+                                  isLoading = true;
+                                });
+                                Login user = await api.login(
+                                    _emailController.text,
+                                    _senhaController.text);
+                                if (user != null) {
+                                  helper.saveLogado(user.id, user.token);
+                                  Navigator.pop(context);
+                                  await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              HomePage(user.token, user.id)));
+                                } else {
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  dialog.showAlertDialog(
+                                      context, 'Aviso', 'Login inválido');
+                                }
+                              }
+                            },
+                          ),
                     RaisedButton(
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
